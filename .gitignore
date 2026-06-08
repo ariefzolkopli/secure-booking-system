@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Django
+db.sqlite3
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+# Environment
+.env
+venv/
+env/
+ENV/
+.venv/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db

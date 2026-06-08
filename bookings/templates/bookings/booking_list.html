@@ -1,0 +1,26 @@
+{% extends 'bookings/base.html' %}
+{% block content %}
+<h2>{% if user.is_staff %}All Bookings{% else %}My Bookings{% endif %}</h2>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.id }}</td>
+            <td>{{ booking.get_service_type_display }}</td>
+            <td>{{ booking.booking_date }}</td>
+            <td>{{ booking.booking_time }}</td>
+            <td>{{ booking.get_status_display }}</td>
+            <td>
+                <a href="{% url 'booking_update' booking.id %}" class="btn">Edit</a>
+                <a href="{% url 'booking_delete' booking.id %}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No bookings found. <a href="{% url 'booking_create' %}">Create one?</a></td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

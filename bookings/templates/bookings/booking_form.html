@@ -1,0 +1,12 @@
+{% extends 'bookings/base.html' %}
+{% block content %}
+<div class="card">
+    <h2>{{ title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Save Booking</button>
+        <a href="{% url 'booking_list' %}" class="btn btn-danger">Cancel</a>
+    </form>
+</div>
+{% endblock %}

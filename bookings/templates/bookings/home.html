@@ -1,0 +1,9 @@
+{% extends 'bookings/base.html' %}
+{% block content %}
+<h1>Welcome, {{ user.first_name|default:user.username }}!</h1>
+<p>This is a secure booking system with RBAC, audit logging, and OWASP-compliant security controls.</p>
+<div style="margin-top: 2rem;">
+    <a href="{% url 'booking_create' %}" class="btn btn-success">Create New Booking</a>
+    <a href="{% url 'booking_list' %}" class="btn">View My Bookings</a>
+</div>
+{% endblock %}
