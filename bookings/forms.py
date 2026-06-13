@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Booking
+from .models import Booking, FileAttachment
 from datetime import date
+import os
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -34,3 +35,30 @@ class BookingForm(forms.ModelForm):
         if booking_date < date.today():
             raise forms.ValidationError('Booking date cannot be in the past')
         return booking_date
+
+class FileUploadForm(forms.ModelForm):
+    class Meta:
+        model = FileAttachment
+        fields = ['file', 'description']
+        widgets = {
+            'file': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf,.jpg,.jpeg,.png,.doc,.docx'}),
+            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional description'}),
+        }
+    
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        
+        if not file:
+            return file
+        
+        # Check file size (max 5MB)
+        if file.size > 5 * 1024 * 1024:
+            raise forms.ValidationError('File size cannot exceed 5MB.')
+        
+        # Check file extension
+        allowed_extensions = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx']
+        ext = os.path.splitext(file.name)[1].lower()
+        if ext not in allowed_extensions:
+            raise forms.ValidationError(f'File type not allowed. Allowed: {", ".join(allowed_extensions)}')
+        
+        return file

@@ -1,0 +1,1 @@
+            raise ValidationError('Invalid characters in input')

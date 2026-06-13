@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from django.core.cache import cache
 from .forms import RegisterForm, BookingForm
 from .models import Booking, AuditLog
 from .decorators import admin_required
@@ -32,16 +33,30 @@ def register(request):
     return render(request, 'bookings/register.html', {'form': form})
 
 def user_login(request):
+    # Rate limiting: Get client IP
+    ip_address = request.META.get('REMOTE_ADDR')
+    cache_key = f'login_attempts_{ip_address}'
+    attempts = cache.get(cache_key, 0)
+    
+    # If more than 5 attempts, block for 5 minutes
+    if attempts >= 5:
+        messages.error(request, 'Too many login attempts. Please wait 5 minutes before trying again.')
+        return render(request, 'bookings/login.html')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            # Login successful - reset attempts
+            cache.delete(cache_key)
             login(request, user)
             log_audit(request, 'login_success', f'User {username} logged in')
             messages.success(request, f'Welcome back, {username}!')
             return redirect('home')
         else:
+            # Login failed - increment attempts
+            cache.set(cache_key, attempts + 1, 300)
             log_audit(request, 'login_failed', f'Failed login attempt for {username}')
             messages.error(request, 'Invalid username or password')
     return render(request, 'bookings/login.html')
@@ -131,3 +146,16 @@ def profile(request):
 def audit_log(request):
     logs = AuditLog.objects.all()[:100]
     return render(request, 'bookings/audit_log.html', {'logs': logs})
+
+# Error Handling Views
+def bad_request(request, exception=None):
+    return render(request, 'bookings/400.html', status=400)
+
+def permission_denied(request, exception=None):
+    return render(request, 'bookings/403.html', status=403)
+
+def page_not_found(request, exception=None):
+    return render(request, 'bookings/404.html', status=404)
+
+def server_error(request):
+    return render(request, 'bookings/500.html', status=500)
