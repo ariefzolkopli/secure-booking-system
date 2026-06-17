@@ -123,16 +123,16 @@ python-dotenv==1.0.0
 
 ## 6. Screenshots
 
-![Login Page](media/image6.png)
+![Login Page](screenshots/login.png)
 *Figure 1: User Login Page*
 
-![Dashboard](media/image18.png)
+![Dashboard](screenshots/dashboard.png)
 *Figure 2: Admin Dashboard*
 
-![Booking List](media/image13.png)
+![Booking List](screenshots/booking_list.png)
 *Figure 3: Booking List*
 
-![Audit Log](media/image19.png)
+![Audit Log](screenshots/audit_log.png)
 *Figure 4: Audit Log (Admin Only)*
 
 ---
